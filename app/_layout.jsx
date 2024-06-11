@@ -1,8 +1,10 @@
 import { Slot, Stack } from "expo-router";
 import React from "react";
+import GlobalProvider from "../context/GlobalProvider";
 
 const RootLayout = () => {
   return (
+    <GlobalProvider>
     <Stack>
       <Stack.Screen
         name="index"
@@ -29,6 +31,7 @@ const RootLayout = () => {
         }}
       />
     </Stack>
+    </GlobalProvider>
   );
 };
 

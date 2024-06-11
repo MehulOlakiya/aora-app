@@ -1,11 +1,12 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../../constants";
 import FromField from "../../components/FromField";
 import CustomButton from "../../components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { createUser } from "../../lib/appwrite";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -15,7 +16,25 @@ const SignUp = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {};
+  const submit = async () => {
+
+    if(!form.email || !form.password || !form.username )[
+      Alert.alert('Error','Please fill all the fields.')
+    ]
+
+    setIsSubmitting(true)
+    try {
+       const user = await createUser(form.email,form.password,form.username)
+       //golab stat
+       router.replace('/home')
+    } catch (error) {
+    console.log('error',JSON.stringify(error,null,2))
+      Alert.alert('Error!',error.message)
+    }finally{
+      setIsSubmitting(false)
+    }
+  };
+  
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
