@@ -1,4 +1,4 @@
-import { Alert,Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -7,7 +7,8 @@ import { images } from "../../constants";
 import FromField from "../../components/FromField";
 import CustomButton from "../../components/CustomButton";
 import { Link } from "expo-router";
-import { signIn } from "../../lib/appwrite";
+import { getCurrentUser, signIn } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -16,23 +17,27 @@ const SignIn = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  
-  const submit = async () => {
+  const { setUser, setIsLogged } = useGlobalContext();
 
-    if(!form.email || !form.password )[
-      Alert.alert('Error','Please fill all the fields.')
-    ]
-    setIsSubmitting(true)
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill all the fields.");
+    }
+
+    setIsSubmitting(true);
+
     try {
-        await signIn(form.email,form.password)
-       //golab stat
-       router.replace('/home')
+      await signIn(form.email, form.password);
+      const result = await getCurrentUser();
+      setUser(result);
+      setIsLogged(true);
+      router.replace("/home");
     } catch (error) {
-      console.log('error',JSON.stringify(error,null,2))
-      Alert.alert('Error!',error.message)
+      console.log("error", JSON.stringify(error, null, 2));
+      Alert.alert("Error!", error.message);
       // Alert.alert('Error!',error.message)
-    }finally{
-      setIsSubmitting(false)
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../constants";
 import CustomButton from "../components/CustomButton";
+import { useGlobalContext } from "../context/GlobalProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,12 +24,16 @@ export default function App() {
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
   useEffect(() => {
     if (error) throw error;
     if (fontLoaded) SplashScreen.hideAsync();
   }, [fontLoaded, error]);
 
   if (!fontLoaded && !error) return null;
+
+  if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
 
   return (
     <SafeAreaView className=" bg-primary h-full">

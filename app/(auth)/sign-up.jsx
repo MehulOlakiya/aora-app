@@ -7,6 +7,7 @@ import FromField from "../../components/FromField";
 import CustomButton from "../../components/CustomButton";
 import { Link, router } from "expo-router";
 import { createUser } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -16,25 +17,26 @@ const SignUp = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { setUser, setIsLogged } = useGlobalContext();
+
   const submit = async () => {
+    if (!form.email || !form.password || !form.username)
+      [Alert.alert("Error", "Please fill all the fields.")];
 
-    if(!form.email || !form.password || !form.username )[
-      Alert.alert('Error','Please fill all the fields.')
-    ]
-
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-       const user = await createUser(form.email,form.password,form.username)
-       //golab stat
-       router.replace('/home')
+      const user = await createUser(form.email, form.password, form.username);
+      setUser(user);
+      setIsLogged(true);
+      router.replace("/home");
     } catch (error) {
-    console.log('error',JSON.stringify(error,null,2))
-      Alert.alert('Error!',error.message)
-    }finally{
-      setIsSubmitting(false)
+      console.log("error", JSON.stringify(error, null, 2));
+      Alert.alert("Error!", error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-  
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
