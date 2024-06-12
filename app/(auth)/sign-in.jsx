@@ -17,7 +17,7 @@ const SignIn = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { setUser, setIsLogged } = useGlobalContext();
+  const { setUser, setIsLoggedIn } = useGlobalContext();
 
   const submit = async () => {
     if (!form.email || !form.password) {
@@ -30,7 +30,7 @@ const SignIn = () => {
       await signIn(form.email, form.password);
       const result = await getCurrentUser();
       setUser(result);
-      setIsLogged(true);
+      setIsLoggedIn(true);
       router.replace("/home");
     } catch (error) {
       console.log("error", JSON.stringify(error, null, 2));

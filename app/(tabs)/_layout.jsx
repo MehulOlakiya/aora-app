@@ -3,6 +3,7 @@ import React from "react";
 import { Tabs, Redirect } from "expo-router";
 
 import { icons } from "../../constants";
+import { StatusBar } from "expo-status-bar";
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -100,6 +101,7 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
+      <StatusBar style="light"/>
     </>
   );
 };
