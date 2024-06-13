@@ -1,39 +1,43 @@
+import React, { useState } from "react";
 import {
-  Alert,
+  ActivityIndicator,
   FlatList,
   Image,
   RefreshControl,
-  StyleSheet,
   Text,
-  useAnimatedValue,
   View,
 } from "react-native";
-import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Spinner from "react-native-loading-spinner-overlay";
 
-import { images } from "../../constants";
+import EmptyState from "../../components/EmptyState";
 import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
-import EmptyState from "../../components/EmptyState";
+import VideoCard from "../../components/VideoCard";
+import { images } from "../../constants";
 import { getAllPosts, getLatestPosts } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
-import VideoCard from "../../components/VideoCard";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Home = () => {
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+  const { user, setUser, setIsLoggedIn } = useGlobalContext();
+  const getAllPostData = useAppwrite(getAllPosts);
+  const latestPostData = useAppwrite(getLatestPosts);
+  const refetchAllPost = getAllPostData.refetch;
+  const refetchLatestPost = latestPostData.refetch;
 
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await refetch();
+    await refetchAllPost();
+    await refetchLatestPost();
     setRefreshing(false);
   };
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary h-full z-10">
       <FlatList
-        data={posts}
+        data={getAllPostData.data}
         // data={[]}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard video={item} />}
@@ -42,10 +46,10 @@ const Home = () => {
             <View className="justify-between items-start flex-row mb-6">
               <View>
                 <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back
+                  Welcome back,
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  Mehul
+                  {user?.username}
                 </Text>
               </View>
               <View className="mt-1.5">
@@ -61,7 +65,7 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Latest Videos
               </Text>
-              <Trending posts={latestPosts ?? []} />
+              <Trending posts={latestPostData.data ?? []} />
             </View>
           </View>
         )}

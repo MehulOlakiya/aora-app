@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { icons, images } from "../constants";
 import { router, usePathname } from "expo-router";
 
-const SearchInput = ({initialQuery}) => {
+const SearchInput = ({ initialQuery }) => {
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery || "");
   return (
